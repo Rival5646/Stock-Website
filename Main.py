@@ -5,6 +5,11 @@ import DownloadStocks as ds
 import threading
 import csv
 import sqlite3
+import bs4 as bs
+import urllib.request
+
+import requests
+
 
 
 def updateDB(letter):
@@ -52,14 +57,24 @@ def updateDB(letter):
 
 
 
-########################     MAIN     ##################################   
+    
+
+########################     MAIN     ##################################
+
+
 
 
 letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 currentTimeStamp = str(datetime.datetime.now()).split(" ")
 
-if int(currentTimeStamp[1].split(":")[0]) > 16:
-    ds.run()
+override = 0
+
+if int(currentTimeStamp[1].split(":")[0]) > 16 or override:
+    ds.start()
+
+
+
+
 
 connection = sqlite3.connect('test.db')
 cursor = connection.cursor()
@@ -73,37 +88,11 @@ for character in letters:
     else:  
         cursor.execute("Create Table companiesIn"+character+" (Company text, Symbol text, Price integer, Images text, Other text)")
 
-    
-
 connection.close()
-
-lst_threads = []
-
-
-start = time.time()
 
 
 for i in letters:
     updateDB(i)
-    
-    #thread = threading.Thread(target = updateDB, args = (i, ))
-    #lst_threads.append(thread)
-    #thread.start()
-
-#for i in range(26):
-    #lst_threads[i].join()
-
-
-
-finish = time.time()
-
-print("Elapsed time:", finish-start)
-
-
-
-#print("End of threads")
-#print(threading.active_count())
-
 
         
 
